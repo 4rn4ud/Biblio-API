@@ -12,10 +12,40 @@ app.get('/parkings', (req,res) => {
 })
 
 // GET
-app.get('/tasks', async (req, res) => {
+app.get('/auteurs/all', async (req, res) => {
     try {
-        const result = await pool.query("select * from tache");
-        res.send(result);
+        var rows = [];
+
+        // open database in memory
+        let db = new sqlite3.Database('./db/biblio-bdd.db', (err) => {
+          if (err) {
+            console.error(err.message);
+          }
+          console.log('Connected to the chinook database.');
+        });
+
+        db.serialize(() => {
+          db.each(`SELECT id, nom, prenom
+                   FROM Auteur`, (err, row) => {
+            if (err) {
+              console.error(err.message);
+            }
+            let dictioAPI = "".concat('{"id": ', row.id, ',"nom": ', '"', row.nom, '","prenom": ', '"', row.prenom, '"}');
+
+            rows.push(JSON.parse(dictioAPI));
+            console.log(rows);
+          });
+        });
+
+        // close the database connection
+        db.close((err) => {
+          if (err) {
+            return console.error(err.message);
+          }
+          console.log('Close the database connection.');
+        });
+
+        res.send(rows);
     } catch (err) {
         throw err;
     }
@@ -51,28 +81,28 @@ app.get('/',(req, res) => {
 
 
 
-// open database in memory
-let db = new sqlite3.Database('./db/biblio-bdd.db', (err) => {
-    if (err) {
-      console.error(err.message);
-    }
-    console.log('Connected to the chinook database.');
-});
+// // open database in memory
+// let db = new sqlite3.Database('./db/biblio-bdd.db', (err) => {
+//     if (err) {
+//       console.error(err.message);
+//     }
+//     console.log('Connected to the chinook database.');
+// });
 
-db.serialize(() => {
-  db.each(`SELECT id, nom, prenom
-           FROM Auteur`, (err, row) => {
-    if (err) {
-      console.error(err.message);
-    }
-    console.log(row.id + "\t" + row.nom + "\t" + row.prenom);
-  });
-});
+// db.serialize(() => {
+//   db.each(`SELECT id, nom, prenom
+//            FROM Auteur`, (err, row) => {
+//     if (err) {
+//       console.error(err.message);
+//     }
+//     console.log(row.id + "\t" + row.nom + "\t" + row.prenom);
+//   });
+// });
 
-// close the database connection
-db.close((err) => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log('Close the database connection.');
-});
+// // close the database connection
+// db.close((err) => {
+//   if (err) {
+//     return console.error(err.message);
+//   }
+//   console.log('Close the database connection.');
+// });
