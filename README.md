@@ -9,6 +9,7 @@ npm install
 ```
 
 - ## Lancer l'API
+> Une fois la commande ci-dessous à été faite, l'API sera accessible à l'adresse suivante : [lien vers l'API](http:localhost:3000)
 ```
 node index.js
 ```
