@@ -43,9 +43,9 @@ app.get('/auteurs/all', async (req, res) => {
             return console.error(err.message);
           }
           console.log('Close the database connection.');
+          res.send(rows);
         });
 
-        res.send(rows);
     } catch (err) {
         throw err;
     }
