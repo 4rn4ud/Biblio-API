@@ -61,6 +61,54 @@ app.get('/auteurs/all', async (req, res) => {
         throw err;
     }
 });
+
+// GET
+app.get('/auteurs/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        var rows = [];
+
+        // open database in memory
+        let db = new sqlite3.Database('./db/biblio-bdd.db', sqlite3.OPEN_READONLY, (err) => {
+          if (err) {
+            console.error(err.message);
+          }
+          console.log('Connected to the chinook database.');
+        });
+
+        db.serialize(() => {
+          db.each(`SELECT id, nom, prenom
+                   FROM Auteur
+                   WHERE id = ?`, [id], (err, row) => {
+            if (err) {
+              console.error(err.message);
+            }
+
+            if (!row) {
+              res.status(404).json({ message: "Auteur non trouvé" });
+              return console.error(err.message);
+            }
+
+            let dictioAPI = {"id": row.id, "nom": row.nom, "prenom": row.prenom};
+
+            rows.push(dictioAPI);
+            console.log(rows);
+          });
+        });
+
+        // close the database connection
+        db.close((err) => {
+          if (err) {
+            return console.error(err.message);
+          }
+          console.log('Close the database connection.');
+          res.json(rows);
+        });
+
+    } catch (err) {
+        throw err;
+    }
+});
   
 // POST
 app.post('/tasks', async (req, res) => {
