@@ -19,6 +19,8 @@ app.get('/auteurs/all', async (req, res) => {
         // open database in memory
         let db = new sqlite3.Database('./db/biblio-bdd.db', sqlite3.OPEN_READONLY, (err) => {
           if (err) {
+            // res.status(500).json({ error: err.message });
+            // return console.error(err.message);
             console.error(err.message);
           }
           console.log('Connected to the chinook database.');
@@ -29,6 +31,11 @@ app.get('/auteurs/all', async (req, res) => {
                    FROM Auteur`, (err, row) => {
             if (err) {
               console.error(err.message);
+            }
+
+            if (!row) {
+              res.status(404).json({ message: "Auteurs non trouvés" });
+              return console.error(err.message);
             }
 
             // let dictioAPI = "".concat('{"id": ', row.id, ',"nom": ', '"', row.nom, '","prenom": ', '"', row.prenom, '"}');
