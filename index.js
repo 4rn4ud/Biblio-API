@@ -17,7 +17,7 @@ app.get('/auteurs/all', async (req, res) => {
         var rows = [];
 
         // open database in memory
-        let db = new sqlite3.Database('./db/biblio-bdd.db', (err) => {
+        let db = new sqlite3.Database('./db/biblio-bdd.db', sqlite3.OPEN_READONLY, (err) => {
           if (err) {
             console.error(err.message);
           }
@@ -30,9 +30,12 @@ app.get('/auteurs/all', async (req, res) => {
             if (err) {
               console.error(err.message);
             }
-            let dictioAPI = "".concat('{"id": ', row.id, ',"nom": ', '"', row.nom, '","prenom": ', '"', row.prenom, '"}');
 
-            rows.push(JSON.parse(dictioAPI));
+            // let dictioAPI = "".concat('{"id": ', row.id, ',"nom": ', '"', row.nom, '","prenom": ', '"', row.prenom, '"}');
+            let dictioAPI = {"id": row.id, "nom": row.nom, "prenom": row.prenom};
+
+            // rows.push(JSON.parse(dictioAPI));
+            rows.push(dictioAPI);
             console.log(rows);
           });
         });
@@ -43,7 +46,8 @@ app.get('/auteurs/all', async (req, res) => {
             return console.error(err.message);
           }
           console.log('Close the database connection.');
-          res.send(rows);
+          //   res.send(rows);
+          res.json(rows);
         });
 
     } catch (err) {
