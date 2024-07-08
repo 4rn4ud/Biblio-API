@@ -30,9 +30,11 @@ app.get('/auteurs/all', async (req, res) => {
             if (err) {
               console.error(err.message);
             }
-            let dictioAPI = "".concat('{"id": ', row.id, ',"nom": ', '"', row.nom, '","prenom": ', '"', row.prenom, '"}');
+            // let dictioAPI = "".concat('{"id": ', row.id, ',"nom": ', '"', row.nom, '","prenom": ', '"', row.prenom, '"}');
+            let dictioAPI = {"id": row.id, "nom": row.nom, "prenom": row.prenom};
 
-            rows.push(JSON.parse(dictioAPI));
+            // rows.push(JSON.parse(dictioAPI));
+            rows.push(dictioAPI);
             console.log(rows);
           });
         });
